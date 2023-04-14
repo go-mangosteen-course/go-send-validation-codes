@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	_ "github.com/lib/pq"
+	"github.com/lib/pq"
 )
 
 const (
@@ -82,13 +82,28 @@ func Migrate() {
 	} else {
 		log.Println("Successfully change the type of happened_at to TIMESTAMP")
 	}
+
+	// 给 users 的 email 字段添加唯一性索引
+	_, err = DB.Exec(`CREATE UNIQUE INDEX users_email_index ON users (email)`)
+	if err != nil {
+		log.Println(err)
+	} else {
+		log.Println("Successfully add unique index to email column")
+	}
 }
 
 func Crud() {
 	// 创建一个 User
 	_, err := DB.Exec(`INSERT INTO users (email) values ('2@qq.com')`)
 	if err != nil {
-		log.Println(err)
+		switch x := err.(type) {
+		case *pq.Error:
+			pqErr := err.(*pq.Error)
+			log.Println(pqErr.Code.Name())
+			log.Println(pqErr.Message)
+		default:
+			log.Println(x)
+		}
 	} else {
 		log.Println("Successfully create a user")
 	}
