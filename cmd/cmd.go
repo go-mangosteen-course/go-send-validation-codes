@@ -33,11 +33,15 @@ func Run() {
 			database.Migrate()
 		},
 	}
+	crudCmd := &cobra.Command{
+		Use: "crud",
+		Run: func(cmd *cobra.Command, args []string) {
+			database.Crud()
+		},
+	}
 	database.PgConnect()
-	rootCmd.AddCommand(srvCmd)
-	rootCmd.AddCommand(dbCmd)
-	dbCmd.AddCommand(createCmd)
-	dbCmd.AddCommand(mgrtCmd)
+	rootCmd.AddCommand(srvCmd, dbCmd)
+	dbCmd.AddCommand(createCmd, mgrtCmd, crudCmd)
 	defer database.PgClose()
 	rootCmd.Execute()
 }
