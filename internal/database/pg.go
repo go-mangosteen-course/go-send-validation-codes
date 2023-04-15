@@ -28,7 +28,6 @@ func PgConnect() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Successfully connect to db")
 }
 
 func PgCreateTables() {
@@ -42,22 +41,17 @@ func PgCreateTables() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println("Successfully create users table")
 }
 func Migrate() {
 	// 给user添加手机字段
 	_, err := DB.Exec(`ALTER TABLE users ADD COLUMN phone VARCHAR(50)`)
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("Successfully add phone column to users table")
 	}
 
 	_, err = DB.Exec(`ALTER TABLE users ADD COLUMN address VARCHAR(200)`)
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("Successfully add address column to users table")
 	}
 
 	// 新增 Items 表，字段为 id, amount, happened_at, created_at, updated_at
@@ -72,23 +66,17 @@ func Migrate() {
 	`)
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("Successfully create items table")
 	}
 
 	_, err = DB.Exec(`ALTER TABLE items ALTER COLUMN happened_at TYPE TIMESTAMP`)
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("Successfully change the type of happened_at to TIMESTAMP")
 	}
 
 	// 给 users 的 email 字段添加唯一性索引
 	_, err = DB.Exec(`CREATE UNIQUE INDEX users_email_index ON users (email)`)
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("Successfully add unique index to email column")
 	}
 }
 
@@ -99,19 +87,14 @@ func Crud() {
 		switch x := err.(type) {
 		case *pq.Error:
 			pqErr := err.(*pq.Error)
-			log.Println(pqErr.Code.Name())
-			log.Println(pqErr.Message)
+			log.Println(pqErr.Code.Name(), pqErr.Message)
 		default:
 			log.Println(x)
 		}
-	} else {
-		log.Println("Successfully create a user")
 	}
 	_, err = DB.Exec(`Update users SET phone = 138123456789 where email = '2@qq.com'`)
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("Successfully update a user")
 	}
 	stmt, err := DB.Prepare("SELECT phone FROM users where email = $1 offset $2 limit $3")
 	if err != nil {
@@ -126,12 +109,10 @@ func Crud() {
 			result.Scan(&phone)
 			log.Println("phone", phone)
 		}
-		log.Println("Successfully read users")
 	}
 
 }
 
 func PgClose() {
 	DB.Close()
-	log.Println("Successfully close db")
 }
