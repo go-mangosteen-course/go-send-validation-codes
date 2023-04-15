@@ -66,38 +66,20 @@ func Migrate() {
 }
 
 func Crud() {
-	// 创建一个 User
 	user := User{Email: "test2@qq.com"}
 	tx := DB.Create(&user)
-	log.Println(tx.RowsAffected)
-	log.Println(user)
-	u2 := User{}
-	_ = DB.Find(&u2, 1)
-	u2.Phone = "123456789"
-	tx = DB.Save(&u2)
 	if tx.Error != nil {
 		log.Println(tx.Error)
-	} else {
-		log.Println(tx.RowsAffected)
-		log.Println(u2)
+	}
+	user.Phone = "123456789"
+	tx = DB.Save(&user)
+	if tx.Error != nil {
+		log.Println(tx.Error)
 	}
 	users := []User{}
-	DB.Offset(0).Limit(10).Order("created_at asc, id desc").Find(&users)
-	// log.Println(users)
-
-	u := User{ID: 1}
-	tx = DB.Delete(&u)
-	if tx.Error != nil {
-		log.Println(tx.Error)
-	} else {
-		log.Println(tx.RowsAffected)
-	}
-
-	tx = DB.Raw("SELECT * FROM users WHERE id = ?", 4).Scan(&u)
-	if tx.Error != nil {
-		log.Println(tx.Error)
-	} else {
-		log.Println(u)
+	DB.Offset(0).Limit(3).Find(&users)
+	for _, u := range users {
+		log.Println(u.Phone)
 	}
 }
 
