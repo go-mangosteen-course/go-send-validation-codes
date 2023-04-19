@@ -24,10 +24,22 @@ go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@lat
 ## 创建迁移文件
 
 ```bash
+go build . && ./mangosteen db create:migration create_users_table
+# 或者
 migrate create -ext sql -dir config/migrations -seq create_users_table
 ```
 ## 运行迁移文件
 
 ```bash
+go build . && ./mangosteen db migrate
+# 或者
 migrate -database "postgres://mangosteen:123456@pg-for-go-mangosteen:5432/mangosteen_dev?sslmode=disable" -source "file://$(pwd)/config/migrations" up
+```
+
+## 回滚迁移文件
+
+```bash
+go build . && ./mangosteen db migrate:down
+# 或者
+migrate -database "postgres://mangosteen:123456@pg-for-go-mangosteen:5432/mangosteen_dev?sslmode=disable" -source "file://$(pwd)/config/migrations" down 1
 ```

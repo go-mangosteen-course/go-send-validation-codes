@@ -1,15 +1,19 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"os/exec"
 	"time"
 
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
-var DB *gorm.DB
+var DB *sql.DB
 
 const (
 	host     = "pg-for-go-mangosteen"
@@ -20,13 +24,8 @@ const (
 )
 
 func Connect() {
-	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatalln(err)
-	}
-	DB = db
+	// dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+	// 	host, port, user, password, dbname)
 }
 
 type User struct {
@@ -50,43 +49,55 @@ type Tag struct {
 	Name string
 }
 
-var models = []any{&User{}, &Item{}, &Tag{}}
-
-func CreateTables() {
-	for _, model := range models {
-		err := DB.Migrator().CreateTable(model)
-		if err != nil {
-			log.Println(err)
-		}
-	}
-	log.Println("CreateTables success")
-}
-func Migrate() {
-	DB.AutoMigrate(models...)
-}
-
-func Crud() {
-	user := User{Email: "test2@qq.com"}
-	tx := DB.Create(&user)
-	if tx.Error != nil {
-		log.Println(tx.Error)
-	}
-	user.Phone = "123456789"
-	tx = DB.Save(&user)
-	if tx.Error != nil {
-		log.Println(tx.Error)
-	}
-	users := []User{}
-	DB.Offset(0).Limit(3).Find(&users)
-	for _, u := range users {
-		log.Println(u.Phone)
-	}
-}
-
-func Close() {
-	sqlDB, err := DB.DB()
+func CreateMigration(filename string) {
+	cmd := exec.Command("migrate", "create", "-ext", "sql", "-dir", "config/migrations", "-seq", filename)
+	err := cmd.Run()
 	if err != nil {
 		log.Fatalln(err)
 	}
-	sqlDB.Close()
+}
+func Migrate() {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	m, err := migrate.New(
+		fmt.Sprintf("file://%s/config/migrations", dir),
+		fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+			user, password, host, port, dbname,
+		))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = m.Up()
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func MigrateDown() {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	m, err := migrate.New(
+		fmt.Sprintf("file://%s/config/migrations", dir),
+		fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+			user, password, host, port, dbname,
+		))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = m.Steps(-1)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func Crud() {
+}
+
+func Close() {
 }
