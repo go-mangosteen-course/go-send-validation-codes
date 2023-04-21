@@ -126,31 +126,31 @@ func Crud() {
 		log.Fatalln(err)
 	}
 
-	users, err := q.ListUsers(DBCtx, queries.ListUsersParams{
-		Offset: 0,
-		Limit:  10,
-	})
+	// users, err := q.ListUsers(DBCtx, queries.ListUsersParams{
+	// 	Offset: 0,
+	// 	Limit:  10,
+	// })
+	// if err != nil {
+	// 	log.Fatalln(err)
+	// }
+	// log.Println(users)
+	u, err = q.FindUserByEmail(DBCtx, fmt.Sprintf("%d@qq.com", id))
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println(users)
-	u, err = q.FindUser(DBCtx, users[0].ID)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	log.Println(u)
-	err = q.DeleteUser(DBCtx, u.ID)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	users, err = q.ListUsers(DBCtx, queries.ListUsersParams{
-		Offset: 0,
-		Limit:  10,
-	})
-	if err != nil {
-		log.Fatalln(err)
-	}
-	log.Println(users)
+	// log.Println(u)
+	// err = q.DeleteUser(DBCtx, u.ID)
+	// if err != nil {
+	// 	log.Fatalln(err)
+	// }
+	// users, err = q.ListUsers(DBCtx, queries.ListUsersParams{
+	// 	Offset: 0,
+	// 	Limit:  10,
+	// })
+	// if err != nil {
+	// 	log.Fatalln(err)
+	// }
+	// log.Println(users)
 }
 
 func Close() {
