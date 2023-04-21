@@ -11,6 +11,7 @@ import (
 type User struct {
 	ID        int32
 	Email     string
+	Phone     string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

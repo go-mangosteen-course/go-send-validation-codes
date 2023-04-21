@@ -15,7 +15,7 @@ INSERT INTO users (
 ) VALUES (
   $1
 )
-RETURNING id, email, created_at, updated_at
+RETURNING id, email, phone, created_at, updated_at
 `
 
 func (q *Queries) CreateUser(ctx context.Context, email string) (User, error) {
@@ -24,6 +24,7 @@ func (q *Queries) CreateUser(ctx context.Context, email string) (User, error) {
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
+		&i.Phone,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
