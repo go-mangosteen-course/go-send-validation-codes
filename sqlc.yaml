@@ -5,5 +5,5 @@ sql:
     schema: "config/schema.sql"
     gen:
       go:
-        package: "sqlc"
-        out: "config/sqlc"
+        package: "queries"
+        out: "config/queries"
