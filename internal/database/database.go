@@ -9,6 +9,8 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -71,6 +73,11 @@ func CreateMigration(filename string) {
 }
 func Migrate() {
 	dir, err := os.Getwd()
+	name := filepath.Base(dir)
+	for !strings.Contains(name, "mangosteen") {
+		dir = filepath.Dir(dir)
+		name = filepath.Base(dir)
+	}
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -85,7 +92,9 @@ func Migrate() {
 	}
 	err = m.Up()
 	if err != nil {
-		log.Fatalln(err)
+		if !strings.Contains(err.Error(), "no change") {
+			log.Fatalln(err)
+		}
 	}
 }
 
