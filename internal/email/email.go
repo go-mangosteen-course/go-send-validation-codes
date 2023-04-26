@@ -1,18 +1,8 @@
 package email
 
 import (
-	"log"
-	"os"
-	"strconv"
-
+	"github.com/spf13/viper"
 	"gopkg.in/gomail.v2"
-)
-
-var (
-	EMAIL_SMTP_HOST = os.Getenv("EMAIL_SMTP_HOST")
-	EMAIL_SMTP_PORT = os.Getenv("EMAIL_SMTP_PORT")
-	EMAIL_USER      = os.Getenv("EMAIL_USER")
-	EMAIL_PWD       = os.Getenv("EMAIL_PWD")
 )
 
 func Send() {
@@ -21,12 +11,12 @@ func Send() {
 	m.SetHeader("To", "frankfang1990@gmail.com")
 	m.SetHeader("Subject", "Hello!")
 	m.SetBody("text/html", "Hello <b>方应杭</b>!")
-	var d *gomail.Dialer
-	if port, err := strconv.Atoi(EMAIL_SMTP_PORT); err != nil {
-		log.Fatalln("EMAIL_STMP_PORT is not a number")
-	} else {
-		d = gomail.NewDialer(EMAIL_SMTP_HOST, port, EMAIL_USER, EMAIL_PWD)
-	}
+	d := gomail.NewDialer(
+		viper.GetString("email.smtp.host"),
+		viper.GetInt("email.smtp.port"),
+		viper.GetString("email.smtp.user"),
+		viper.GetString("email.smtp.password"),
+	)
 	if err := d.DialAndSend(m); err != nil {
 		panic(err)
 	}

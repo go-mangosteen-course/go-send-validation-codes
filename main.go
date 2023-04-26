@@ -1,7 +1,10 @@
 package main
 
 import (
+	"log"
 	"mangosteen/cmd"
+
+	"github.com/spf13/viper"
 )
 
 // @title           山竹记账 API
@@ -20,5 +23,12 @@ import (
 // @externalDocs.url          https://swagger.io/resources/open-api/
 
 func main() {
+	viper.SetConfigName("config")
+	viper.SetConfigType("json")
+	viper.AddConfigPath(".")
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	cmd.Run()
 }

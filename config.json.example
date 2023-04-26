@@ -1,0 +1,10 @@
+{
+  "email": {
+    "smtp": {
+      "host": "smtp.qq.com",
+      "port": 465,
+      "user": "fangyinghang@foxmail.com",
+      "password": "xxxx"
+    }
+  }
+}
