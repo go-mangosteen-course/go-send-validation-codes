@@ -1,0 +1,30 @@
+basePath: /api/v1
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: fangyinghang@foxmail.com
+    name: 方应杭
+    url: https://fangyinghang.com
+  description: 这是一个使用 Swagger 2.0 标准编写的 API 文档。
+  title: 山竹记账 API
+paths:
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: 用来测试 API 是否正常工作
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: 用来测试 API 是否正常工作
+securityDefinitions:
+  BasicAuth(JWT):
+    type: basic
+swagger: "2.0"
